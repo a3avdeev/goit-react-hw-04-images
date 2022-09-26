@@ -19,7 +19,7 @@ export default class ImageSearch extends Component {
     dataModal: {},
     };
 
-  async getImages() {
+  getImages = async () => {
     const { inputValue, page } = this.state;
     this.setState({
       loading: true,
@@ -31,7 +31,6 @@ export default class ImageSearch extends Component {
           console.log(data)
       return {
           items: [...items, ...data],
-          
         
       }})
       
@@ -51,7 +50,7 @@ export default class ImageSearch extends Component {
     this.getImages()
   };
 
-  onLoadMoreClick = () => {
+  loadMore = () => {
       this.setState(({ page }) => {
           return {
               page: page + 1
@@ -60,25 +59,38 @@ export default class ImageSearch extends Component {
       this.getImages()
   }
 
-  onModalOpen = (id) => {
-        const imageToOpen = this.state.items.find(item => item.id === id);
+  modalOpen = (id) => {
+        const openLargeImage = this.state.items.find(item => item.id === id);
         
         this.setState({
             modal: true,
-            dataModal: imageToOpen,
+            dataModal: openLargeImage,
         })
+      
+        // document.addEventListener('click', this.modalClose)
+        // document.addEventListener('keydown', this.modalClose)
   }
 
+    // modalClose = (ev) => {
+    //     if (ev.currentTarget === ev.target || ev.code === 'Escape') {
+    //         this.setState({ modal: false, })
+            
+    //         document.removeEventListener('click', this.modalClose)
+    //         document.removeEventListener('keydown', this.modalClose)
+    //     }
+    // }
+
   render() {
-    const { items, loading, modal, dataModal } = this.state;
+    const { items, loading, modal, dataModal, error } = this.state;
       const isImages = Boolean(items.lenght);
-      const { hadleFormSubmit, onLoadMoreClick } = this;
+      const { hadleFormSubmit, loadMore, modalOpen, modalClose } = this;
     return <>
         <Searchbar onSubmit={hadleFormSubmit} />
-        {isImages && <ImageGallery data={items} />}
+        {isImages && <ImageGallery items={items} modalOpen={modalOpen}/>}
         {loading && <Loader />}
-        {isImages && <Button onClick={onLoadMoreClick} />}
-        {modal && <Modal data={dataModal} />}
+        {error && <p>Please try again later</p>}
+        {isImages && <Button onClick={loadMore} />}
+        {modal && <Modal data={dataModal} onClose={modalClose}/>}
         <ToastContainer autoClose={3000} />
       </>
   }

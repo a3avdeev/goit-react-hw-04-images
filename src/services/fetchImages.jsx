@@ -11,7 +11,7 @@ export const fetchImages = async (inputValue, page) => {
     const response = await axios.get(
       `${BASE_URL}?key=${KEY}&q=${inputValue}&image_type=${imageType}&orientation=${orientation}&safesearch=true&page=${page}&per_page=${perPage}`
     );
-    console.log(response.data);
+    // console.log(response.data);
     return response.data.hits;
   } catch (error) {
     console.log(error);

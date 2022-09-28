@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 export const GalleryWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 16px;
+  padding-bottom: 24px;
 `;

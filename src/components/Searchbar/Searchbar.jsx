@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { toast } from 'react-toastify';
-import { BiSearchAlt } from 'react-icons/bi';
-import { SearchbarStyled } from './Searchbar.Styled';
+import { BsSearch } from 'react-icons/bs';
+import { SearchbarStyled, HeaderStyled } from './Searchbar.Styled';
 import PropTypes from "prop-types";
 
 export default class Searchbar extends Component {
@@ -33,10 +33,10 @@ export default class Searchbar extends Component {
         const { inputValue } = this.state;
         const { handleSubmit, handleInputChange } = this;
         return (
-            <header>
+            <HeaderStyled>
                 <SearchbarStyled onSubmit={handleSubmit}>
                     <button type="submit">
-                        <BiSearchAlt />
+                        <BsSearch />
                     </button>
 
                     <input
@@ -49,7 +49,7 @@ export default class Searchbar extends Component {
                         name='inputValue'
                     />
                 </SearchbarStyled>
-            </header>
+            </HeaderStyled>
         );
     }
     

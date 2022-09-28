@@ -3,11 +3,11 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import {GalleryList} from './ImageGallery.Styled'
 import PropTypes from "prop-types";
 
-export const ImageGallery = ({ data }) => {
-  console.log(data)
+export const ImageGallery = ({modalOpen, data }) => {
+  // console.log(data)
   return <GalleryList>
           {data.map(item => <li key={item.id}>
-                  <ImageGalleryItem data={item} />
+                  <ImageGalleryItem data={item} modalOpen={modalOpen}/>
               </li>
           )}
       </GalleryList>

@@ -1,6 +1,8 @@
 import { Component } from 'react';
 import { toast } from 'react-toastify';
 import { BiSearchAlt } from 'react-icons/bi';
+import { SearchbarStyled } from './Searchbar.Styled';
+import PropTypes from "prop-types";
 
 export default class Searchbar extends Component {
     state = {
@@ -28,9 +30,11 @@ export default class Searchbar extends Component {
     }
 
     render() {
+        const { inputValue } = this.state;
+        const { handleSubmit, handleInputChange } = this;
         return (
             <header>
-                <form onSubmit={this.handleSubmit}>
+                <SearchbarStyled onSubmit={handleSubmit}>
                     <button type="submit">
                         <BiSearchAlt />
                     </button>
@@ -40,14 +44,17 @@ export default class Searchbar extends Component {
                         autoComplete="off"
                         autoFocus
                         placeholder="Search images and photos"
-                        value={this.state.inputValue}
-                        onChange={this.handleInputChange}
+                        value={inputValue}
+                        onChange={handleInputChange}
                         name='inputValue'
                     />
-                </form>
+                </SearchbarStyled>
             </header>
         );
     }
     
 }
 
+Searchbar.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+}

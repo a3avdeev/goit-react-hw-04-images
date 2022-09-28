@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export const LoaderStyled = styled.div`
+export const GalleryWrapper = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
 `;

@@ -6,10 +6,10 @@ const perPage = 12;
 const imageType = "photo";
 const orientation = "horizontal";
 
-export const fetchImages = async (inputName, page) => {
+export const fetchImages = async (inputValue, page) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}?key=${KEY}&q=${inputName}&image_type=${imageType}&orientation=${orientation}&safesearch=true&page=${page}&per_page=${perPage}`
+      `${BASE_URL}?key=${KEY}&q=${inputValue}&image_type=${imageType}&orientation=${orientation}&safesearch=true&page=${page}&per_page=${perPage}`
     );
     console.log(response.data);
     return response.data.hits;

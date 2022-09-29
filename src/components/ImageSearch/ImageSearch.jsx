@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Searchbar from '../Searchbar/Searchbar';
 import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { fetchImages } from '../../services/fetchImages';
 import { Loader } from '../Loader/Loader';
@@ -19,6 +20,7 @@ export default class ImageSearch extends Component {
     error: null,
     modal: false,
     dataModal: {},
+    loadMore: false,
     };
 
     getImages = async () => {
@@ -29,10 +31,26 @@ export default class ImageSearch extends Component {
         
     try {
         const data = await fetchImages(inputValue, page);
+        if (data.hits.length === 0) {
+                toast.warn ("Sorry, there are no images matching your search query", {
+                theme: "colored"
+            })
+            }
+        else if (data.hits.length < 12) {
             this.setState(({ items }) => {
         return {
-            items: [...items, ...data],
+            items: [...items, ...data.hits],
+            loadMore: false,
         }})
+        } else {
+            this.setState(({ items }) => {
+                console.log(data.totalHits);
+        return {
+            items: [...items, ...data.hits],
+            loadMore: true,
+        }})
+        }
+
 
     } catch (error) {
         this.setState({error})
@@ -51,8 +69,16 @@ export default class ImageSearch extends Component {
         }
     };
 
-    hadleFormSubmit = inputValue => {
-        this.setState({ inputValue })
+    hadleFormSubmit = input => {
+        const { inputValue } = this.state;
+        if (input !== inputValue) {
+            this.setState({
+                inputValue: input,
+                items: [],
+                page: 1,
+                loadMore: false
+        });
+        }
     };
 
     loadMoreFn = async () => {
@@ -85,7 +111,7 @@ export default class ImageSearch extends Component {
     };
 
     render() {
-        const { items, loading, error, modal, dataModal } = this.state;
+        const { items, loading, error, modal, dataModal, loadMore } = this.state;
         const { hadleFormSubmit, loadMoreFn, onModalOpen, onModalClose } = this;
         const isImages = items.length !== 0;
 
@@ -94,7 +120,7 @@ export default class ImageSearch extends Component {
             {isImages && <ImageGallery data={items} modalOpen={onModalOpen} />}
             {loading && <Loader />}
             {error && <p>Please try again later</p>}
-            {isImages && <Button onClick={loadMoreFn} />}
+            {loadMore && <Button onClick={loadMoreFn} />}
             {modal && <Modal data={dataModal} onClose={onModalClose} />}
             <ToastContainer autoClose={3000} />
         </GalleryWrapper>

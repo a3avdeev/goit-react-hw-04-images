@@ -12,7 +12,7 @@ export const fetchImages = async (inputValue, page) => {
       `${BASE_URL}?key=${KEY}&q=${inputValue}&image_type=${imageType}&orientation=${orientation}&safesearch=true&page=${page}&per_page=${perPage}`
     );
     // console.log(response.data);
-    return response.data.hits;
+    return response.data;
   } catch (error) {
     console.log(error);
   }

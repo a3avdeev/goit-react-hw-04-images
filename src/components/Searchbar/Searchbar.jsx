@@ -26,7 +26,7 @@ export default class Searchbar extends Component {
         }
 
         this.props.onSubmit(inputValue)
-        this.setState({ inputValue: '', });
+        this.setState({ inputValue, });
     }
 
     render() {

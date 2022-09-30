@@ -10,5 +10,10 @@ export const ImageGalleryItem = ({modalOpen, data}) => {
 }
 
 ImageGalleryItem.propTypes = {
-    data: PropTypes.object
+    data: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        webformatURL: PropTypes.string.isRequired,
+        tags: PropTypes.string.isRequired,
+    }),
+    modalOpen: PropTypes.func.isRequired,
 }

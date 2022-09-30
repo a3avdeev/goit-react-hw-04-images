@@ -44,7 +44,9 @@ export default class ImageSearch extends Component {
         }})
         } else {
             this.setState(({ items }) => {
-                console.log(data.totalHits);
+                console.log('total find', data.totalHits);
+                console.log('total loaded', items.length + 12);
+                console.log('left to load', data.totalHits - (items.length + 12));
         return {
             items: [...items, ...data.hits],
             loadMore: true,
@@ -69,11 +71,11 @@ export default class ImageSearch extends Component {
         }
     };
 
-    hadleFormSubmit = input => {
-        const { inputValue } = this.state;
-        if (input !== inputValue) {
+    hadleFormSubmit = inputValue => {
+        // const { inputValue } = this.state;
+        if (inputValue !== this.state.inputValue) {
             this.setState({
-                inputValue: input,
+                inputValue,
                 items: [],
                 page: 1,
                 loadMore: false
@@ -81,7 +83,7 @@ export default class ImageSearch extends Component {
         }
     };
 
-    loadMoreFn = async () => {
+    loadMoreFn = () => {
         this.setState(({ page }) => {
             return {
                 page: page + 1,

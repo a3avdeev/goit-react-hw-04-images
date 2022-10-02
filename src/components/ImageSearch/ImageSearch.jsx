@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Searchbar from '../Searchbar/Searchbar';
 import { ToastContainer } from 'react-toastify';
@@ -11,123 +11,93 @@ import { ImageGallery } from '../ImageGallery/ImageGallery';
 import { GalleryWrapper } from './ImageSearch.Styled';
 import { Modal } from '../Modal/Modal';
 
-export default class ImageSearch extends Component {
-  state = {
-    inputValue: '',
-    items: [],
-    loading: false,
-    page: 1,
-    error: null,
-    modal: false,
-    dataModal: {},
-    loadMore: false,
-    };
+export default function ImageSearch() {
 
-    getImages = async () => {
-        const { inputValue, page } = this.state;
-        this.setState({
-        loading: true,
-        });
-        
-    try {
-        const data = await fetchImages(inputValue, page);
-        if (data.hits.length === 0) {
-                toast.warn ("Sorry, there are no images matching your search query", {
-                theme: "colored"
-            })
+    const [inputValue, setInputValue] = useState('');
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [error, setError] = useState(null);
+    const [modal, setModal] = useState(false);
+    const [dataModal, setDataModal] = useState({});
+    const [loadMore, setLoadMore] = useState(false);
+
+
+    useEffect(() => {
+        if (inputValue === '') {
+            return
+        }
+
+        const getImages = async () => {
+            setLoading(true);
+            try {
+                const data = await fetchImages(inputValue, page);
+                if (data.hits.length === 0) {
+                        toast.warn ("Sorry, there are no images matching your search query", {
+                        theme: "colored"
+                    })
+                    }
+                else if (data.hits.length < 12) {
+                    setItems((prevItems) => [...prevItems, ...data.hits])
+                    setLoadMore(false);
+                } else {
+                    setItems((items) => 
+                        [...items, ...data.hits])
+                        // console.log('total find', data.totalHits);
+                        // console.log('total loaded', items.length + 12);
+                        // console.log('left to load', data.totalHits - (items.length + 12));
+                    setLoadMore(true);
+                }
+            } catch (error) {
+                setError(error);
+                }
+            finally {
+                setLoading(false);
+                }
             }
-        else if (data.hits.length < 12) {
-            this.setState(({ items }) => {
-        return {
-            items: [...items, ...data.hits],
-            loadMore: false,
-        }})
-        } else {
-            this.setState(({ items }) => {
-                console.log('total find', data.totalHits);
-                console.log('total loaded', items.length + 12);
-                console.log('left to load', data.totalHits - (items.length + 12));
-        return {
-            items: [...items, ...data.hits],
-            loadMore: true,
-        }})
-        }
-
-
-    } catch (error) {
-        this.setState({error})
-        }
-    finally {
-        this.setState({
-            loading: false
-        })
-        }
-    }
+                getImages();
+            }, [inputValue, page]);
     
-    componentDidUpdate(prevProps, prevState) {
-    const { inputValue, page } = this.state;
-    if ((inputValue && prevState.inputValue !== inputValue) || page > prevState.page) {
-        this.getImages();
+    const hadleFormSubmit = input => {
+        if (input !== inputValue) {
+            setInputValue(input);
+            setItems([]);
+            setPage(1);
+            setLoadMore(false);
         }
     };
 
-    hadleFormSubmit = inputValue => {
-        // const { inputValue } = this.state;
-        if (inputValue !== this.state.inputValue) {
-            this.setState({
-                inputValue,
-                items: [],
-                page: 1,
-                loadMore: false
-        });
-        }
+    const loadMoreFn = () => {
+        setPage((prevpage) => prevpage + 1);
     };
 
-    loadMoreFn = () => {
-        this.setState(({ page }) => {
-            return {
-                page: page + 1,
-            }
-        })
-    };
-
-    onModalOpen = (id) => {
-        const { items } = this.state;
+    const onModalOpen = (id) => {
         const openLargeImage = items.find(item => item.id === id);
-        const { onModalClose } = this;
         
-        this.setState({
-            modal: true,
-            dataModal: openLargeImage,
-        })
+        setModal(true);
+        setDataModal(openLargeImage);
+        
         document.addEventListener('click', onModalClose)
         document.addEventListener('keydown', onModalClose)
     };
 
-    onModalClose = (e) => {
+    const onModalClose = (e) => {
         if (e.currentTarget === e.target || e.code === 'Escape') {
-            this.setState({ modal: false, })
-            document.removeEventListener('click', this.onModalClose)
-            document.removeEventListener('keydown', this.onModalClose)
+            setModal(false);
+            document.removeEventListener('click', onModalClose)
+            document.removeEventListener('keydown', onModalClose)
         }
     };
 
-    render() {
-        const { items, loading, error, modal, dataModal, loadMore } = this.state;
-        const { hadleFormSubmit, loadMoreFn, onModalOpen, onModalClose } = this;
-        const isImages = items.length !== 0;
+    const isImages = items.length !== 0;
 
-        return <GalleryWrapper>
-            <Searchbar onSubmit={hadleFormSubmit} />
-            {isImages && <ImageGallery data={items} modalOpen={onModalOpen} />}
-            {loading && <Loader />}
-            {error && <p>Please try again later</p>}
-            {loadMore && <Button onClick={loadMoreFn} />}
-            {modal && <Modal data={dataModal} onClose={onModalClose} />}
-            <ToastContainer autoClose={3000} />
-        </GalleryWrapper>
-    }
+    return <GalleryWrapper>
+        <Searchbar onSubmit={hadleFormSubmit} />
+        {isImages && <ImageGallery data={items} modalOpen={onModalOpen} />}
+        {loading && <Loader />}
+        {error && <p>Please try again later</p>}
+        {loadMore && <Button onClick={loadMoreFn} />}
+        {modal && <Modal data={dataModal} onClose={onModalClose} />}
+        <ToastContainer autoClose={3000} />
+    </GalleryWrapper>
 }
-
-
-// modalOpen={modalOpen} 

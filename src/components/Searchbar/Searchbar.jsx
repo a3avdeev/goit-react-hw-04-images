@@ -1,23 +1,19 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { BsSearch } from 'react-icons/bs';
 import { SearchbarStyled, HeaderStyled } from './Searchbar.Styled';
 import PropTypes from "prop-types";
 
-export default class Searchbar extends Component {
-    state = {
-        inputValue: '',
+export default function Searchbar({onSubmit}) {
+
+    const [inputValue, setInputValue] = useState("")
+
+    const handleInputChange = (event) => {
+        setInputValue(event.currentTarget.value)
     }
 
-    handleInputChange = (event) => {
-        this.setState({
-            inputValue: event.currentTarget.value,
-        });
-    }
-
-    handleSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        const { inputValue } = this.state;
 
         if (inputValue.trim() === '') {
             return toast.error("Please, input something", {
@@ -25,14 +21,11 @@ export default class Searchbar extends Component {
             });
         }
 
-        this.props.onSubmit(inputValue)
-        this.setState({ inputValue, });
+        onSubmit(inputValue);
+        setInputValue(inputValue);
     }
 
-    render() {
-        const { inputValue } = this.state;
-        const { handleSubmit, handleInputChange } = this;
-        return (
+    return (
             <HeaderStyled>
                 <SearchbarStyled onSubmit={handleSubmit}>
                     <button type="submit">
@@ -51,7 +44,6 @@ export default class Searchbar extends Component {
                 </SearchbarStyled>
             </HeaderStyled>
         );
-    }
     
 }
 
